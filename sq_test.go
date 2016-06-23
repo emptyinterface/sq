@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/jasonmoo/sq/test"
+	"github.com/emptyinterface/sq/test"
 	"github.com/robertkrimen/otto/ast"
 )
 
@@ -18,7 +18,7 @@ type errreader struct{}
 
 var errreadererr = errors.New("errreader")
 
-func (_ errreader) Read(b []byte) (int, error) { return 0, errreadererr }
+func (_ errreader) Read(_ []byte) (int, error) { return 0, errreadererr }
 
 func TestFails(t *testing.T) {
 
