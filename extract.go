@@ -28,15 +28,15 @@ func extractString(sel *goquery.Selection, acc string) (string, error) {
 	switch {
 	case acc == accessorHTML:
 		s, err := sel.Html()
-		return s, err
+		return strings.TrimSpace(s), err
 	case acc == accessorText:
-		return sel.Text(), nil
+		return strings.TrimSpace(sel.Text()), nil
 	case strings.HasPrefix(acc, accessorAttr):
 		s, exists := sel.Attr(trimAccessor(acc, accessorAttr))
 		if !exists {
 			return "", fmt.Errorf("%s: %v", ErrAttributeNotFound, acc)
 		}
-		return s, nil
+		return strings.TrimSpace(s), nil
 	// jank
 	case acc == "":
 		return "", nil
