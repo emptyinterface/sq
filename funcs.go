@@ -56,6 +56,13 @@ var (
 			}
 			return "", ErrNoRegexpMatch
 		},
+		"strip": func(s, pattern string) (string, error) {
+			r, err := regexp.Compile(pattern)
+			if err != nil {
+				return "", err
+			}
+			return r.ReplaceAllString(s, ""), nil
+		},
 	}
 
 	loadFuncs = map[string]LoadFunc{
