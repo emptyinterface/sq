@@ -10,12 +10,23 @@ import (
 
 type (
 	path struct {
+		flags    []string
 		selector string
 		acc      string
 		parsers  []parser
 		loader   *loader
 	}
 )
+
+func (p *path) hasFlag(flag string) bool {
+	for _, v := range p.flags {
+		if v == flag {
+			return true
+		}
+	}
+
+	return false
+}
 
 const (
 	accessorAttr = "attr"
@@ -72,7 +83,22 @@ func parseFunctionSignature(s string) (string, string) {
 
 func parseTag(tag reflect.StructTag) (*path, error) {
 	p := &path{}
-	for i, part := range strings.Split(tag.Get("sq"), " | ") {
+
+	s := tag.Get("sq")
+
+	if len(s) > 0 && s[0] == '(' {
+		if end := strings.Index(s, ")"); end != -1 {
+			for _, e := range strings.Split(s[1:end], ",") {
+				if e = strings.TrimSpace(e); e != "" {
+					p.flags = append(p.flags, e)
+				}
+			}
+
+			s = strings.TrimLeft(s[end:], ") ")
+		}
+	}
+
+	for i, part := range strings.Split(s, " | ") {
 		part = strings.TrimSpace(part)
 		switch i {
 		case 0:
