@@ -2,7 +2,9 @@ package sq
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
+	pathpkg "path"
 	"reflect"
 	"regexp"
 	"strings"
@@ -10,6 +12,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	douceur "github.com/aymerick/douceur/parser"
+	"github.com/emptyinterface/ago"
 	otto "github.com/robertkrimen/otto/parser"
 )
 
@@ -63,11 +66,40 @@ var (
 			}
 			return r.ReplaceAllString(s, ""), nil
 		},
+		"path.prepend": func(s, token string) (string, error) {
+			if strings.HasPrefix(s, token) {
+				return s, nil
+			}
+			fmt.Println(pathpkg.Join(token, s))
+			return pathpkg.Join(token, s), nil
+		},
+		"path.append": func(s, token string) (string, error) {
+			if strings.HasSuffix(s, token) {
+				return s, nil
+			}
+			fmt.Println(pathpkg.Join(s, token))
+			return pathpkg.Join(s, token), nil
+		},
+		"prepend": func(s, token string) (string, error) {
+			if strings.HasPrefix(s, token) {
+				return s, nil
+			}
+			return token + s, nil
+		},
+		"append": func(s, token string) (string, error) {
+			if strings.HasSuffix(s, token) {
+				return s, nil
+			}
+			return s + token, nil
+		},
 	}
 
 	loadFuncs = map[string]LoadFunc{
 		"time": func(_ *goquery.Selection, s, layout string) (interface{}, error) {
 			return time.Parse(strings.TrimSpace(layout), strings.TrimSpace(s))
+		},
+		"ago": func(_ *goquery.Selection, s, _ string) (interface{}, error) {
+			return ago.Parse(strings.TrimSpace(s))
 		},
 	}
 
