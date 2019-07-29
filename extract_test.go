@@ -120,6 +120,14 @@ func TestParseTag(t *testing.T) {
 			},
 			nil,
 		},
+		{`sq:"() p"`, &path{flags: []string{}, selector: "p"}, nil},
+		{`sq:"( ) p"`, &path{flags: []string{}, selector: "p"}, nil},
+		{`sq:"(opt1) p"`, &path{flags: []string{"opt1"}, selector: "p"}, nil},
+		{`sq:"( opt1 ) p"`, &path{flags: []string{"opt1"}, selector: "p"}, nil},
+		{`sq:"(opt1,opt2) p"`, &path{flags: []string{"opt1", "opt2"}, selector: "p"}, nil},
+		{`sq:"( opt1 , opt2 ) p"`, &path{flags: []string{"opt1", "opt2"}, selector: "p"}, nil},
+		{`sq:"(opt1,opt2,opt3) p"`, &path{flags: []string{"opt1", "opt2", "opt3"}, selector: "p"}, nil},
+		{`sq:"(    opt1 ,opt2, opt3    )    p"`, &path{flags: []string{"opt1", "opt2", "opt3"}, selector: "p"}, nil},
 
 		// bad
 		{`sq:"p.last | fuzzy"`, nil, fmt.Errorf("Bad accessor: %q", `fuzzy`)},
@@ -135,6 +143,15 @@ func TestParseTag(t *testing.T) {
 				t.Errorf("Expected error %q, got %q", test.err, err)
 			}
 			continue
+		}
+		if len(p.flags) != len(test.p.flags) {
+			t.Errorf("Expected %#v, got %#v", test.p.flags, p.flags)
+		} else {
+			for i := 0; i < len(p.flags); i++ {
+				if p.flags[i] != test.p.flags[i] {
+					t.Errorf("Expected %#v, got %#v", test.p.flags, p.flags)
+				}
+			}
 		}
 		if p.selector != test.p.selector {
 			t.Errorf("Expected %q, got %q", test.p.selector, p.selector)

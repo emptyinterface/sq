@@ -57,6 +57,7 @@ type (
 		Stylesheet     *css.Stylesheet      `sq:"style:first-of-type"`
 		Stylesheets    []*css.Stylesheet    `sq:"style"`
 		CustomType     CustomType           `sq:"p.string"`
+		Optional       string               `sq:"(optional) blink"`
 
 		// errs
 		Map                 map[string]interface{} `sq:"div"`

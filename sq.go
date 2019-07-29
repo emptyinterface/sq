@@ -62,6 +62,10 @@ func hydrateValue(v *reflect.Value, sel *goquery.Selection, p *path) []error {
 	if p != nil && len(p.selector) > 0 && p.selector != "." && !sel.Is(p.selector) {
 		sel = sel.Find(p.selector)
 		if sel.Size() == 0 {
+			if p.hasFlag("optional") {
+				return nil
+			}
+
 			return []error{fmt.Errorf("%q did not match", p.selector)}
 		}
 	}
